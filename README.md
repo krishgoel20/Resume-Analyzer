@@ -103,7 +103,7 @@ GROQ_API_KEY=your_groq_api_key
 ### 4. Run the app
 
 ```bash
-   streamlit run app.py
+streamlit run app.py
 ```
 
 App runs at `http://localhost:8501`.
