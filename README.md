@@ -1,6 +1,6 @@
-# 🤖 AI Resume & Job Description Analyzer
+# 🤖 FitScore
 
-An LLM-powered tool that compares a resume against a job description and returns a structured match analysis — score, matching/missing skills, and actionable suggestions. The analysis pipeline is built as an explicit **LangGraph** graph with guardrails against malformed, low-quality, and adversarial input.
+A LLM-powered tool that compares a resume against a job description and returns a structured match analysis — score, matching/missing skills, and actionable suggestions. The analysis pipeline is built as an explicit **LangGraph** graph with guardrails against malformed, low-quality, and adversarial input.
 
 ## Features
 
