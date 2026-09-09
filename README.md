@@ -112,7 +112,7 @@ App runs at `http://localhost:8501`.
 
 ## Features
 
-### AI Features
+### 🧠 AI Features
 - 🎯 **Structured LLM analysis** — a single Groq API call returns match score, matching skills, missing skills, and improvement suggestions as strict, schema-validated JSON (strict: true mode), not free-form text
 - 🔀 **LangGraph-orchestrated pipeline** — validation, analysis, and output sanity-checking run as an explicit graph (validate → analyze → sanity_check) with conditional routing, rather than manual if/try branching
 - ✅ **Output sanity checks** — flags internally inconsistent results (e.g., a near-perfect score with zero missing skills, or listed "matching skills" that don't actually appear in the resume text) as advisory warnings, without blocking the result
