@@ -113,19 +113,19 @@ App runs at `http://localhost:8501`.
 ## Features
 
 ### 🧠 AI Features
-- 🎯 **Structured LLM analysis** — a single Groq API call returns match score, matching skills, missing skills, and improvement suggestions as strict, schema-validated JSON (strict: true mode), not free-form text
+- 📊 **Structured LLM analysis** — a single Groq API call returns match score, matching skills, missing skills, and improvement suggestions as strict, schema-validated JSON (strict: true mode), not free-form text
 - 🔀 **LangGraph-orchestrated pipeline** — validation, analysis, and output sanity-checking run as an explicit graph (validate → analyze → sanity_check) with conditional routing, rather than manual if/try branching
 - ✅ **Output sanity checks** — flags internally inconsistent results (e.g., a near-perfect score with zero missing skills, or listed "matching skills" that don't actually appear in the resume text) as advisory warnings, without blocking the result
 
 ### 📄 Input Features
-- **Dual input paths** — upload a .pdf/.docx file, or paste resume text directly; both paths run through identical validation and analysis logic
-- **File text extraction** — pypdf and python-docx extract plain text from uploaded resumes before analysis
+- 🔁 **Dual input paths** — upload a .pdf/.docx file, or paste resume text directly; both paths run through identical validation and analysis logic
+- 📃 **File text extraction** — pypdf and python-docx extract plain text from uploaded resumes before analysis
 
 ### 🛡️ Guardrail/Security Features
-- **File validation** — rejects oversized files (>5MB), and files that produce suspiciously short or garbled extracted text (via an alphabetic-character-ratio heuristic)
-- **Prompt injection detection** — keyword-based filtering catches common manipulation attempts (e.g., "ignore previous instructions") embedded in resume text before it reaches the LLM
-- **Prompt hardening** — the system prompt explicitly establishes that resume content is untrusted data, never instructions, as a structural defense layer beyond keyword filtering
-- **Consistent enforcement** — every guardrail applies identically to both the file-upload and text-paste paths
+- 📏 **File validation** — rejects oversized files (>5MB), and files that produce suspiciously short or garbled extracted text (via an alphabetic-character-ratio heuristic)
+- 🕵️ **Prompt injection detection** — keyword-based filtering catches common manipulation attempts (e.g., "ignore previous instructions") embedded in resume text before it reaches the LLM
+- 🧱 **Prompt hardening** — the system prompt explicitly establishes that resume content is untrusted data, never instructions, as a structural defense layer beyond keyword filtering
+- ⚖️ **Consistent enforcement** — every guardrail applies identically to both the file-upload and text-paste paths
 
 ---
 
