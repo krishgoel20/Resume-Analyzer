@@ -1,6 +1,6 @@
 import streamlit as st
 from file_utils import extract_text
-from guardrails import validate_file_size
+from guardrails import ( validate_file_size, validate_output_sanity, validate_rubric_consistency, check_ats_formatting, )
 from graph import pipeline
 
 st.set_page_config(page_title="AI Resume Analyzer", page_icon="🤖")
@@ -11,7 +11,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("**Resume**")
     uploaded_file = st.file_uploader("Upload a file (.pdf or .docx)", type=["pdf", "docx"])
-    resume_text_input = st.text_area("...or Paste text", height=250)
+    resume_text_input = st.text_area("...or paste your Resume text", height=250)
 
     if uploaded_file is not None:
         try:
@@ -45,18 +45,28 @@ if st.button("Analyze"):
         else:
             result = final_state["result"]
 
-            for warning in final_state["warnings"]:
+            warnings = validate_output_sanity(result, resume_text)
+            warnings += validate_rubric_consistency(result)
+            warnings += check_ats_formatting(resume_text)
+            for warning in warnings:
                 st.warning(warning)
 
             st.subheader(f"Match Score: {result.match_score}/100")
             st.progress(result.match_score / 100)
 
+            st.markdown("### 📊 Score Breakdown")
+            for dim in result.rubric:
+                st.markdown(f"**{dim.dimension}** — {dim.points_awarded}/{dim.max_points}")
+                st.progress(dim.points_awarded / dim.max_points if dim.max_points > 0 else 0)
+                st.caption(dim.explanation)
+
             col_a, col_b = st.columns(2)
 
             with col_a:
                 st.markdown("### ✅ Matching Skills")
-                for skill in result.matching_skills:
-                    st.markdown(f"- {skill}")
+                for match in result.matching_skills:
+                    st.markdown(f"**{match.skill}**")
+                    st.caption(f"\"{match.evidence}\"")
 
             with col_b:
                 st.markdown("### ❌ Missing Skills")

@@ -62,13 +62,64 @@ def validate_output_sanity(result, resume_text: str) -> list[str]:
 
     lowered_resume = resume_text.lower()
     unverifiable_skills = [
-        skill for skill in result.matching_skills
-        if skill.lower() not in lowered_resume
+        match for match in result.matching_skills
+        if match.evidence.lower() not in lowered_resume
     ]
     if len(unverifiable_skills) > len(result.matching_skills) / 2:
         warnings.append(
-            "Several 'matching skills' don't appear verbatim in the resume text — "
-            "the analysis may be inaccurate or the resume used different terminology."
+            "Several 'matching skills' cite evidence that doesn't appear verbatim "
+            "in the resume text — the analysis may be inaccurate."
+        )
+
+    return warnings
+
+def validate_rubric_consistency(result) -> list[str]:
+    warnings = []
+
+    rubric_sum = sum(dim.points_awarded for dim in result.rubric)
+    if rubric_sum != result.match_score:
+        warnings.append(
+            f"Rubric dimensions sum to {rubric_sum}, but the reported match score "
+            f"is {result.match_score}. There may be an inconsistency in the analysis."
+        )
+
+    for dim in result.rubric:
+        if dim.points_awarded > dim.max_points:
+            warnings.append(
+                f"'{dim.dimension}' was awarded {dim.points_awarded} points, "
+                f"exceeding its maximum of {dim.max_points}."
+            )
+
+    return warnings
+
+import re
+
+EMAIL_PATTERN = re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}")
+PHONE_PATTERN = re.compile(r"(\+?\d{1,3}[-.\s]?)?\(?\d{3,5}\)?[-.\s]?\d{3,5}[-.\s]?\d{3,5}")
+SECTION_KEYWORDS = ["experience", "education", "skills", "projects", "certifications"]
+MAX_RESUME_CHARS = 6000  # roughly 2 pages of dense text
+
+def check_ats_formatting(resume_text: str) -> list[str]:
+    warnings = []
+    lowered = resume_text.lower()
+
+    if not EMAIL_PATTERN.search(resume_text):
+        warnings.append("No email address detected — ATS systems and recruiters may not be able to contact you.")
+
+    if not PHONE_PATTERN.search(resume_text):
+        warnings.append("No phone number detected — consider adding one for ATS contact-info parsing.")
+
+    found_sections = [kw for kw in SECTION_KEYWORDS if kw in lowered]
+    if len(found_sections) < 2:
+        warnings.append(
+            "Few or no standard section headers detected (e.g., 'Experience', 'Education', 'Skills'). "
+            "ATS parsers rely on these to categorize your resume content correctly."
+        )
+
+    if len(resume_text) > MAX_RESUME_CHARS:
+        warnings.append(
+            "Resume content is quite long — consider trimming to roughly one to two pages, "
+            "as many ATS systems and recruiters deprioritize longer resumes."
         )
 
     return warnings

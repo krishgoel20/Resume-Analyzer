@@ -33,7 +33,24 @@ RESUME:
 JOB DESCRIPTION:
 {job_description}
 
-Analyze the match and provide your assessment.
+Evaluate the resume across five weighted rubric dimensions:
+- Core Skills (max 40 points): technical skill overlap with the job description
+- Experience Level (max 25 points): years and seniority alignment
+- Education / Certifications (max 10 points): degree and certification match
+- Domain Relevance (max 15 points): industry/domain fit beyond raw skills
+- Soft Skills / Communication (max 10 points): evidence of communication, leadership, or teamwork
+
+For each dimension, award points (never exceeding its max) and give a one or two
+sentence explanation grounded in specific evidence from the resume. The overall
+match_score must equal the sum of all points awarded across the five dimensions.
+
+For each matching skill, quote the exact phrase or sentence from the resume text
+that demonstrates it — do not paraphrase or summarize the evidence, copy it directly
+from the resume. If you cannot find a direct quote supporting a skill, do not list
+it as a matching skill.
+
+Then provide the missing skills and specific suggestions to improve the resume for
+this job description.
 """
 
     response = client.chat.completions.create(
