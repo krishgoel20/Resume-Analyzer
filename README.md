@@ -145,7 +145,7 @@ App runs at `http://localhost:8501`.
 - 🗂️ **Section structure check** — flags resumes with few or no standard section headers (Experience, Education, Skills, etc.)
 - 📐 **Length check** — flags resumes that run noticeably longer than a typical one-to-two-page length
 
-### 🛡️ Guardrail/Security Features
+### 🛡️ Guardrail / Security Features
 - 📏 **File validation** — rejects oversized files (>5MB), and files that produce suspiciously short or garbled extracted text (via an alphabetic-character-ratio heuristic)
 - 🕵️ **Prompt injection detection** — keyword-based filtering catches common manipulation attempts (e.g., "ignore previous instructions") embedded in resume text before it reaches the LLM
 - 🧱 **Prompt hardening** — the system prompt explicitly establishes that resume content is untrusted data, never instructions, as a structural defense layer beyond keyword filtering
