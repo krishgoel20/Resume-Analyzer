@@ -35,28 +35,28 @@ A LLM-powered tool that compares a resume against a job description and returns 
 
 ---
 
-## How It Works
+## How it works
 
 ```
 Resume Upload / Paste
-↓
+         ↓
 File size check (upload path only)
-↓
+         ↓
 [ LangGraph Pipeline ]
-↓
+         ↓
 validate (length + prompt injection check) → (fails) → END
-↓
-(passes)
-↓
+         ↓
+      (passes)
+         ↓
 analyze (LLM: rubric scoring, evidence-cited skills, bullet rewrites)
-↓
+         ↓
 verify_rewrites (LLM: fact-checks each rewrite against its original)
-↓
+         ↓
 sanity_check (rubric sum check, evidence verification, ATS checks, fabricated-number check)
-↓
-END
-↓
-Result
+         ↓
+        END
+         ↓
+       Result
 ```
 
 ---
