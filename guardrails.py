@@ -123,3 +123,22 @@ def check_ats_formatting(resume_text: str) -> list[str]:
         )
 
     return warnings
+
+NUMBER_PATTERN = re.compile(r"\d+(?:\.\d+)?%?")
+
+def check_bullet_rewrite_fabrication(result) -> list[str]:
+    warnings = []
+
+    for rewrite in result.rewritten_bullets:
+        original_numbers = set(NUMBER_PATTERN.findall(rewrite.original))
+        rewritten_numbers = set(NUMBER_PATTERN.findall(rewrite.rewritten))
+        new_numbers = rewritten_numbers - original_numbers
+
+        if new_numbers:
+            warnings.append(
+                f"A rewritten bullet introduces number(s) not present in the original "
+                f"({', '.join(new_numbers)}) — verify this isn't a fabricated metric "
+                f"before using it: \"{rewrite.rewritten}\""
+            )
+
+    return warnings

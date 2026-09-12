@@ -1,6 +1,12 @@
 import streamlit as st
 from file_utils import extract_text
-from guardrails import ( validate_file_size, validate_output_sanity, validate_rubric_consistency, check_ats_formatting, )
+from guardrails import (
+    validate_file_size,
+    validate_output_sanity,
+    validate_rubric_consistency,
+    check_ats_formatting,
+    check_bullet_rewrite_fabrication,
+)
 from graph import pipeline
 
 st.set_page_config(page_title="AI Resume Analyzer", page_icon="🤖")
@@ -11,7 +17,7 @@ col1, col2 = st.columns(2)
 with col1:
     st.markdown("**Resume**")
     uploaded_file = st.file_uploader("Upload a file (.pdf or .docx)", type=["pdf", "docx"])
-    resume_text_input = st.text_area("...or paste your Resume text", height=250)
+    resume_text_input = st.text_area("...or Paste text", height=250)
 
     if uploaded_file is not None:
         try:
@@ -37,6 +43,7 @@ if st.button("Analyze"):
                 "job_description": job_description,
                 "error": None,
                 "result": None,
+                "verification": None,
                 "warnings": [],
             })
 
@@ -48,6 +55,7 @@ if st.button("Analyze"):
             warnings = validate_output_sanity(result, resume_text)
             warnings += validate_rubric_consistency(result)
             warnings += check_ats_formatting(resume_text)
+            warnings += check_bullet_rewrite_fabrication(result)
             for warning in warnings:
                 st.warning(warning)
 
@@ -76,3 +84,26 @@ if st.button("Analyze"):
             st.markdown("### 💡 Suggestions")
             for suggestion in result.suggestions:
                 st.markdown(f"- {suggestion}")
+
+            if result.rewritten_bullets:
+                st.markdown("### ✏️ Suggested Bullet Rewrites")
+                verification = final_state["verification"]
+                for rewrite in result.rewritten_bullets:
+                    st.markdown("**Before:**")
+                    st.caption(rewrite.original)
+                    st.markdown("**After:**")
+                    st.markdown(rewrite.rewritten)
+                    st.caption(f"💡 {rewrite.rationale}")
+
+                    match = next(
+                        (v for v in verification.verifications if v.original == rewrite.original),
+                        None,
+                    )
+                    if match and not match.is_supported:
+                        st.warning(
+                            f"⚠️ This rewrite may contain unsupported claims: {', '.join(match.unsupported_claims)}"
+                        )
+                    elif match and match.is_supported:
+                        st.caption("✅ Verified: claims supported by the original")
+
+                    st.divider()

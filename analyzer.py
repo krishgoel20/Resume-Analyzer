@@ -2,7 +2,7 @@ import os
 import json
 from groq import Groq
 from dotenv import load_dotenv
-from models import ResumeAnalysis
+from models import ResumeAnalysis, VerificationBatch
 
 load_dotenv()
 
@@ -49,6 +49,14 @@ that demonstrates it — do not paraphrase or summarize the evidence, copy it di
 from the resume. If you cannot find a direct quote supporting a skill, do not list
 it as a matching skill.
 
+Select up to 3 of the weakest or most improvable bullets from the resume — ones that
+are vague, unquantified, or poorly aligned with the job description. For each,
+quote the original verbatim, then rewrite it to better match the job description
+(stronger action verbs, quantified impact where plausible, relevant keywords from
+the JD). Do not fabricate metrics or claims not supportable by the original bullet
+— if no plausible number exists, improve clarity and relevance instead of inventing
+a statistic. Briefly explain what changed and why.
+
 Then provide the missing skills and specific suggestions to improve the resume for
 this job description.
 """
@@ -72,3 +80,46 @@ this job description.
 
     result_json = json.loads(response.choices[0].message.content)
     return ResumeAnalysis(**result_json)
+
+VERIFICATION_SYSTEM_PROMPT = """You are a strict fact-checker. You compare a rewritten
+resume bullet against its original and determine whether the rewrite introduces any
+claim — a skill, a technology, an outcome, a metric, or an impact — that is not
+reasonably supported by the original text. Be conservative: if a claim in the rewrite
+cannot be reasonably inferred from the original, mark it unsupported.
+"""
+
+def verify_rewrites(rewritten_bullets: list) -> VerificationBatch:
+    if not rewritten_bullets:
+        return VerificationBatch(verifications=[])
+
+    bullets_text = "\n\n".join(
+        f"Original: {b.original}\nRewritten: {b.rewritten}"
+        for b in rewritten_bullets
+    )
+
+    user_prompt = f"""
+For each pair below, determine if the rewritten version only contains claims
+supported by the original. List any unsupported claims specifically.
+
+{bullets_text}
+"""
+
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {"role": "system", "content": VERIFICATION_SYSTEM_PROMPT},
+            {"role": "user", "content": user_prompt},
+        ],
+        temperature=0.1,
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "verification_batch",
+                "schema": VerificationBatch.model_json_schema(),
+                "strict": True,
+            },
+        },
+    )
+
+    result_json = json.loads(response.choices[0].message.content)
+    return VerificationBatch(**result_json)
