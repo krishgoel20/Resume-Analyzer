@@ -191,7 +191,7 @@ This is a **small, single-run, single-model test** (`openai/gpt-oss-120b` at `te
 
 ## ✏️ Rewrite Fabrication Testing: A Real Example
 
-During development, the bullet-rewrite feature was tested against a resume/JD pair and produced three rewrites. The layered verification caught issues in **all three** — two via the numeric check (invented "sub-100ms response times" and "200+ test users," neither present in the originals), and the third via the semantic check alone, after the numeric check found nothing (a certification bullet was rewritten to imply "proficiency in cloud architecture, security, and billing models" — a broader competency claim than "cleared an exam" actually supports, with no numbers involved to trigger the first check). This is direct, observed evidence that the two layers catch genuinely different failure modes, not overlapping copies of the same check.
+During development, the bullet-rewrite feature was tested against a resume/JD pair and produced three rewrites. The layered verification caught issues in **all three** — two via the numeric check (invented "sub-100ms response times" and "200+ test users", neither present in the originals), and the third via the semantic check alone, after the numeric check found nothing (a certification bullet was rewritten to imply "proficiency in cloud architecture, security, and billing models" — a broader competency claim than "cleared an exam" actually supports, with no numbers involved to trigger the first check). This is direct, observed evidence that the two layers catch genuinely different failure modes, not overlapping copies of the same check.
 
 ## Limitations
 
