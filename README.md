@@ -1,4 +1,4 @@
-# 🤖 FitScore
+# 🤖 ResumeLens
 
 A LLM-powered tool that compares a resume against a job description and returns a detailed, evidence-backed match analysis — a weighted rubric score, quoted skill matches, missing skills, actionable suggestions and verified bullet rewrites. The analysis pipeline is built as an explicit **LangGraph** graph with guardrails against malformed, low-quality, and adversarial input, and has been tested against a documented adversarial suite.
 
